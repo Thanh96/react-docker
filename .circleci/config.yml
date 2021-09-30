@@ -7,45 +7,21 @@ orbs:
   node: circleci/node@4.7
   cypress: cypress-io/cypress@1
 
-jobs:
-  - node/test:
-      # This is the node version to use for the `cimg/node` tag
-      # Relevant tags can be found on the CircleCI Developer Hub
-      # https://circleci.com/developer/images/image/cimg/node
-      version: '16.10'
-      # If you are using yarn, change the line below from "npm" to "yarn"
-      pkg-manager: npm
-  - cypress/test:
-    docker:
-      # the Docker image with Cypress dependencies
-      - image: cypress/base:8
-        environment:
-          ## this enables colors in the output
-          TERM: xterm
-    working_directory: ~/app
-    parallelism: 1
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v2-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - v2-deps-{{ .Branch }}-
-            - v2-deps-
-      - run: npm ci
-      - save_cache:
-          key: v2-deps-{{ .Branch }}-{{ checksum "package-lock.json" }}
-          paths:
-            - ~/.npm
-            - ~/.cache
-      - run:
-          name: Running E2E tests with JUnit reporter
-          command: npm run cypress
-      - store_test_results:
-          path: npx run cypress
-      - run:
-          name: Running E2E tests with multiple reporters
-          command: npm run test-multiple
+
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+workflows:
+  sample: # This is the name of the workflow, feel free to change it to better match your workflow.
+    # Inside the workflow, you define the jobs you want to run.
+    jobs:
+      - node/test:
+          # This is the node version to use for the `cimg/node` tag
+          # Relevant tags can be found on the CircleCI Developer Hub
+          # https://circleci.com/developer/images/image/cimg/node
+          version: '16.10'
+          # If you are using yarn, change the line below from "npm" to "yarn"
+          pkg-manager: npm
         
-        
+     
                
 
